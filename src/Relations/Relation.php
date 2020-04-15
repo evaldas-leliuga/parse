@@ -1,8 +1,6 @@
-<?php
-
-namespace Parziphal\Parse\Relations;
+<?php namespace Parse\Eloquent\Relations;
 
 abstract class Relation
 {
-    abstract public function getResults();
+	abstract public function getResults();
 }

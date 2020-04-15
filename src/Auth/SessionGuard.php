@@ -1,12 +1,9 @@
-<?php
-
-namespace Parziphal\Parse\Auth;
+<?php namespace Parse\Eloquent\Auth;
 
 use Parse\ParseUser;
 use Parse\ParseClient;
 use Parse\ParseSession;
 use Parse\ParseException;
-use Illuminate\Support\Facades\App;
 use Illuminate\Auth\SessionGuard as Base;
 use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
 
@@ -18,61 +15,61 @@ use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
  */
 class SessionGuard extends Base
 {
-    /**
-     * @var Recaller
-     */
-    protected $recaller;
+	/**
+	 * @var Recaller
+	 */
+	protected $recaller;
 
-    public function user()
-    {
-        $user = parent::user();
+	public function user()
+	{
+		$user = parent::user();
 
-        if ($user && !ParseUser::getCurrentUser()) {
-            $sessionToken = $this->recaller->sessionId();
+		if ($user && !ParseUser::getCurrentUser()) {
+			$sessionToken = $this->recaller->sessionId();
 
-            if ($sessionToken) {
-                try {
-                    ParseUser::become($sessionToken);
-                    ParseClient::getStorage()->set('user', ParseUser::getCurrentUser());
-                } catch (ParseException $e) {
-                }
-            }
+			if ($sessionToken) {
+				try {
+					ParseUser::become($sessionToken);
+					ParseClient::getStorage()->set('user', ParseUser::getCurrentUser());
+				} catch (ParseException $e) {
+				}
+			}
 
-            if (!ParseUser::getCurrentUser()) {
-                // Laravel knows the user but Parse doesn't and we don't have
-                // the session token to login the user to Parse.
-                return null;
-            }
-        }
+			if (!ParseUser::getCurrentUser()) {
+				// Laravel knows the user but Parse doesn't and we don't have
+				// the session token to login the user to Parse.
+				return null;
+			}
+		}
 
-        return $user;
-    }
+		return $user;
+	}
 
-    public function logout()
-    {
-        parent::logout();
-        ParseUser::logOut();
-    }
+	public function logout()
+	{
+		parent::logout();
+		ParseUser::logOut();
+	}
 
-    protected function recaller()
-    {
-        if (is_null($this->request)) {
-            return;
-        } elseif ($this->recaller) {
-            return $this->recaller;
-        }
+	protected function recaller()
+	{
+		if (is_null($this->request)) {
+			return;
+		} else if ($this->recaller) {
+			return $this->recaller;
+		}
 
-        if ($recaller = $this->request->cookies->get($this->getRecallerName())) {
-            $this->recaller = new Recaller($recaller);
-        }
+		if ($recaller = $this->request->cookies->get($this->getRecallerName())) {
+			$this->recaller = new Recaller($recaller);
+		}
 
-        return $this->recaller;
-    }
+		return $this->recaller;
+	}
 
-    protected function queueRecallerCookie(AuthenticatableContract $user)
-    {
-        $this->getCookieJar()->queue($this->createRecaller(
-            $user->getAuthIdentifier().'|'.$user->getRememberToken().'|'.ParseSession::getCurrentSession()->getSessionToken()
-        ));
-    }
+	protected function queueRecallerCookie(AuthenticatableContract $user)
+	{
+		$this->getCookieJar()->queue($this->createRecaller(
+			$user->getAuthIdentifier() . '|' . $user->getRememberToken() . '|' . ParseSession::getCurrentSession()->getSessionToken()
+		));
+	}
 }

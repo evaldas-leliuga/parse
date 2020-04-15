@@ -4,10 +4,10 @@ use Parse\ParseClient;
 
 $autoloader = require __DIR__ . '/../vendor/autoload.php';
 
-$autoloader->addPsr4('Parziphal\\Parse\\Test\\', __DIR__);
-$autoloader->addPsr4('Parziphal\\Parse\\', __DIR__ . '/../src', true);
+$autoloader->addPsr4('Parse\\Eloquent\\Test\\', __DIR__);
+$autoloader->addPsr4('Parse\\Eloquent\\', __DIR__ . '/../src', true);
 
-$appId     = getenv('parseAppId');
+$appId = getenv('parseAppId');
 $masterKey = getenv('parseMasterKey');
 $serverUrl = getenv('parseServerUrl');
 $mountPath = getenv('parseMountPath');

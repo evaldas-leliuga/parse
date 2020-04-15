@@ -1,29 +1,27 @@
-<?php
+<?php namespace Parse\Eloquent\Relations;
 
-namespace Parziphal\Parse\Relations;
-
-use Parziphal\Parse\Query;
-use Parziphal\Parse\ObjectModel;
+use Parse\Eloquent\Model;
 
 class HasManyArray extends HasMany
 {
-    public function addConstraints()
-    {
-        $this->query->containedIn($this->foreignKey, $this->parentObject);
-    }
+	public function addConstraints()
+	{
+		$this->query->containedIn($this->foreignKey, $this->parentObject);
+	}
 
-    /**
-     * Relate other object to this object.
-     *
-     * @param  ObjectModel $model The child object
-     * @return ObjectModel
-     */
-    public function save(ObjectModel $model)
-    {
-        $model->addUnique($this->foreignKey, [$this->parentObject->getParseObject()]);
+	/**
+	 * Relate other object to this object.
+	 *
+	 * @param Model $model The child object
+	 *
+	 * @return Model
+	 */
+	public function save(Model $model)
+	{
+		$model->addUnique($this->foreignKey, [$this->parentObject->getParseObject()]);
 
-        $model->save();
+		$model->save();
 
-        return $model;
-    }
+		return $model;
+	}
 }

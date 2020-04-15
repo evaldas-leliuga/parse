@@ -1,18 +1,16 @@
-<?php
+<?php namespace Parse\Eloquent\Test\Models;
 
-namespace Parziphal\Parse\Test\Models;
+use Parse\Eloquent\Model;
 
-use Parziphal\Parse\ObjectModel;
-
-class Post extends ObjectModel
+class Post extends Model
 {
-    public function categories()
-    {
-        return $this->belongsToMany(Category::class);
-    }
+	public function categories()
+	{
+		return $this->belongsToMany(Category::class);
+	}
 
-    public function user()
-    {
-        return $this->belongsTo(User::class);
-    }
+	public function user()
+	{
+		return $this->belongsTo(User::class);
+	}
 }

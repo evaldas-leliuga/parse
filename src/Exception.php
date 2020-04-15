@@ -1,6 +1,4 @@
-<?php
-
-namespace Parziphal\Parse;
+<?php namespace Parse\Eloquent;
 
 class Exception extends \Exception
 {

@@ -5,17 +5,25 @@
     "license": "MIT",
     "require": {
         "php": "^7.1",
-        "parse/php-sdk": "^1.2.0"
+        "ext-json": "*",
+        "ext-curl": "*",
+        "illuminate/auth": "^6.0",
+        "illuminate/config": "^6.0",
+        "illuminate/console": "^6.0",
+        "illuminate/contracts": "^6.0",
+        "illuminate/http": "^6.0",
+        "illuminate/support": "^6.0",
+        "parse/php-sdk": "^1.6.0"
     },
     "autoload": {
         "psr-4": {
-            "Parziphal\\Parse\\": "src/"
+            "Parse\\Eloquent\\": "src/"
         }
     },
     "extra": {
         "laravel": {
             "providers": [
-                "Parziphal\\Parse\\ParseServiceProvider"
+                "Parse\\Eloquent\\ParseServiceProvider"
             ]
         }
     }

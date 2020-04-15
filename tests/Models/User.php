@@ -1,13 +1,11 @@
-<?php
+<?php namespace Parse\Eloquent\Test\Models;
 
-namespace Parziphal\Parse\Test\Models;
+use Parse\Eloquent\Model;
 
-use Parziphal\Parse\ObjectModel;
-
-class User extends ObjectModel
+class User extends Model
 {
-    public function posts()
-    {
-        return $this->hasMany(Post::class);
-    }
+	public function posts()
+	{
+		return $this->hasMany(Post::class);
+	}
 }

@@ -1,112 +1,110 @@
-<?php
+<?php namespace Parse\Eloquent\Relations;
 
-namespace Parziphal\Parse\Relations;
-
-use Parziphal\Parse\ObjectModel;
+use Parse\Eloquent\Model;
 use Illuminate\Support\Collection;
 
 class BelongsToMany extends Relation
 {
-    protected $embeddedClass;
+	protected $embeddedClass;
 
-    protected $parentObject;
+	protected $parentObject;
 
-    protected $keyName;
+	protected $keyName;
 
-    protected $collection;
+	protected $collection;
 
-    protected $childrenQueue = [];
+	protected $childrenQueue = [];
 
-    public function __construct($embeddedClass, $keyName, ObjectModel $parentObject)
-    {
-        $this->embeddedClass = $embeddedClass;
-        $this->parentObject  = $parentObject;
-        $this->keyName       = $keyName;
-        $this->collection    = new Collection();
+	public function __construct($embeddedClass, $keyName, Model $parentObject)
+	{
+		$this->embeddedClass = $embeddedClass;
+		$this->parentObject = $parentObject;
+		$this->keyName = $keyName;
+		$this->collection = new Collection();
 
-        $this->createItems();
-    }
+		$this->createItems();
+	}
 
-    /**
-     * Pass calls to the collection.
-     */
-    public function __call($method, $params)
-    {
-        $ret = call_user_func_array([$this->collection, $method], $params);
+	/**
+	 * Pass calls to the collection.
+	 */
+	public function __call($method, $params)
+	{
+		$ret = call_user_func_array([$this->collection, $method], $params);
 
-        if ($ret === $this->collection) {
-            return $this;
-        }
+		if ($ret === $this->collection) {
+			return $this;
+		}
 
-        return $ret;
-    }
+		return $ret;
+	}
 
-    public function getResults()
-    {
-        return $this->collection;
-    }
+	public function getResults()
+	{
+		return $this->collection;
+	}
 
-    /**
-     * Save one or more parents to this relation.
-     *
-     * ```
-     * $post->comments()->save($comment);
-     * ```
-     *
-     * This object is saved automatically.
-     *
-     * The children will be added with `addUnique` or `add`
-     * depending on the $unique parameter.
-     *
-     * @param ObjectModel|ObjectModel[]  $others
-     * @param bool                       $unique
-     */
-    public function save($others, $unique = true)
-    {
-        if (!is_array($others)) {
-            $this->addOne($others, $unique);
-        } else {
-            foreach ($others as $other) {
-                $this->addOne($other, $unique);
-            }
-        }
+	/**
+	 * Save one or more parents to this relation.
+	 *
+	 * ```
+	 * $post->comments()->save($comment);
+	 * ```
+	 *
+	 * This object is saved automatically.
+	 *
+	 * The children will be added with `addUnique` or `add`
+	 * depending on the $unique parameter.
+	 *
+	 * @param Model|Model[] $others
+	 * @param bool          $unique
+	 */
+	public function save($others, $unique = true)
+	{
+		if (!is_array($others)) {
+			$this->addOne($others, $unique);
+		} else {
+			foreach ($others as $other) {
+				$this->addOne($other, $unique);
+			}
+		}
 
-        $this->parentObject->save();
-    }
+		$this->parentObject->save();
+	}
 
-    protected function createItems()
-    {
-        $items = $this->parentObject->getParseObject()->get($this->keyName);
+	protected function createItems()
+	{
+		$items = $this->parentObject->getParseObject()->get($this->keyName);
 
-        if ($items) {
-            $class = $this->embeddedClass;
+		if ($items) {
+			$class = $this->embeddedClass;
 
-            foreach ($items as $item) {
-                $this->collection[] = new $class($item);
-            }
-        }
-    }
+			foreach ($items as $item) {
+				$this->collection[] = new $class($item);
+			}
+		}
+	}
 
-    protected function addOne(ObjectModel $other, $unique = true)
-    {
-        $parentParse = $this->parentObject->getParseObject();
+	protected function addOne(Model $other, $unique = true)
+	{
+		$parentParse = $this->parentObject->getParseObject();
 
-        if ($parentParse->{$this->keyName}) {
-            $count = count($parentParse->{$this->keyName});
-        } else {
-            $count = 0;
-        }
+		if ($parentParse->{$this->keyName}) {
+			$count = count($parentParse->{$this->keyName});
+		} else {
+			$count = 0;
+		}
 
-        if ($unique) {
-            $this->parentObject->addUnique($this->keyName, [$other->getParseObject()]);
-        } else {
-            $this->parentObject->add($this->keyName, [$other->getParseObject()]);
-        }
+		if ($unique) {
+			$this->parentObject->addUnique($this->keyName, [$other->getParseObject()]);
+		} else {
+			$this->parentObject->add($this->keyName, [$other->getParseObject()]);
+		}
 
-        if ($count < count($parentParse->{$this->keyName})) {
-            $this->childrenQueue[] = $other;
+		if ($count < count($parentParse->{$this->keyName})) {
+			$this->childrenQueue[] = $other;
 
-            $this->collection[] = $other;
-        }
-    }
+			$this->collection[] = $other;
+		}
+	}
 }

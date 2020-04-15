@@ -1,34 +1,32 @@
-<?php
+<?php namespace Parse\Eloquent\Relations;
 
-namespace Parziphal\Parse\Relations;
-
-use Parziphal\Parse\ObjectModel;
+use Parse\Eloquent\Model;
 
 class BelongsTo extends Relation
 {
-    protected $embeddedClass;
+	protected $embeddedClass;
 
-    protected $keyName;
+	protected $keyName;
 
-    protected $childObject;
+	protected $childObject;
 
-    public function __construct($embeddedClass, $keyName, ObjectModel $childObject)
-    {
-        $this->embeddedClass = $embeddedClass;
-        $this->childObject   = $childObject;
-        $this->keyName       = $keyName;
-    }
+	public function __construct($embeddedClass, $keyName, Model $childObject)
+	{
+		$this->embeddedClass = $embeddedClass;
+		$this->childObject = $childObject;
+		$this->keyName = $keyName;
+	}
 
-    public function getResults()
-    {
-        $class = $this->embeddedClass;
+	public function getResults()
+	{
+		$class = $this->embeddedClass;
 
-        $parent = $this->childObject->getParseObject()->get($this->keyName);
+		$parent = $this->childObject->getParseObject()->get($this->keyName);
 
-        if ($parent) {
-            return (new $class($parent))->fetch();
-        } else {
-            return null;
-        }
-    }
+		if ($parent) {
+			return (new $class($parent))->fetch();
+		} else {
+			return null;
+		}
+	}
 }

@@ -1,6 +1,6 @@
 # Laravel Parse
 
-This library pretends to make Parse usable in a Eloquent-like manner. For Laravel 5.2+.
+This library pretends to make Parse usable in a Eloquent-like manner. For Laravel 6.0+.
 
 ## Features
 
@@ -8,20 +8,20 @@ This library pretends to make Parse usable in a Eloquent-like manner. For Larave
 * Use facade classes that wraps Parse's classes, exposing an Eloquent-like interface.
 * Enabled to work with Parse's relations.
 * User authentication with username/password combinations and/or with Facebook.
-* Command to create ObjectModels (`artisan parse:model SomeModel`).
+* Command to create Models (`artisan parse:model SomeModel`).
 
 ## Setup
 
 Install the library with Composer:
 
-    composer require parziphal/parse
+    composer require evaldas-leliuga/parse
 
 Add the service provider in your `config/app.php` file:
 
 ```php
 'providers' => [
     // etc...
-    Parziphal\Parse\ParseServiceProvider::class,
+    Parse\Eloquent\ParseServiceProvider::class,
 ],
 ```
 
@@ -39,23 +39,23 @@ The command creates a file at `config/parse.php`, where you can set your Parse s
 
 The `REST_API_key` variable is optional as Parse doesn't require that key anymore.
 
-## ObjectModels
+## Models
 
-Create models extending the `Parziphal\Parse\ObjectModel` class:
+Create models extending the `Parse\Eloquent\Model` class:
 
 ```php
 namespace App;
 
-use Parziphal\Parse\ObjectModel;
+use Parse\Eloquent\Model;
 
-class Post extends ObjectModel
+class Post extends Model
 {
 }
 ```
 
 And that's it. However, remember that you can use the Artisan command `php artisan parse:model SomeModel` to easily create a model.
 
-ObjectModels behave just as an Eloquent model, so you can do stuff like:
+Models behave just as an Eloquent model, so you can do stuff like:
 
 ```php
 // Instantiate with data
@@ -97,9 +97,9 @@ You use them like this:
 
 ```php
 
-use Parziphal\Parse\ObjectModel;
+use Parse\Eloquent\Model;
 
-class Post extends ObjectModel
+class Post extends Model
 {
     public function categories()
     {
@@ -114,7 +114,7 @@ class Post extends ObjectModel
 
 // Having the above class where categories() is a `belongsToMany` relation,
 // the class Category would have a posts() relation of type `hasManyArray`:
-class Category extends ObjectModel
+class Category extends Model
 {
     public function posts()
     {
@@ -123,7 +123,7 @@ class Category extends ObjectModel
 }
 
 // This would be the User class:
-class User extends ObjectModel
+class User extends Model
 {
     public function posts()
     {
@@ -148,7 +148,7 @@ $user->posts()->create($arrayWithPostData);
 
 ## Queries
 
-`Parziphal\Parse\Query` is a wrapper for `Parse\ParseQuery`, which also behaves like Eloquent Builder:
+`Parse\Eloquent\Query` is a wrapper for `Parse\ParseQuery`, which also behaves like Eloquent Builder:
 
 ```php
 // Note that `get` is like Eloquent Builder's `get`, which executes the query,
@@ -195,25 +195,25 @@ $posts = Post::all(true);
 
 // To configure a single model to _always_ use master key, define
 // a protected static property `$defaultUseMasterKey`:
-class Post extends ObjectModel
+class Post extends Model
 {
     protected static $defaultUseMasterKey = true;
 }
 
 // Finally, you can make all models use master key with this:
-Parziphal\Parse\ObjectModel::setDefaultUseMasterKey(true);
+Parse\Eloquent\Model::setDefaultUseMasterKey(true);
 ```
 
 ## Log in with Parse
 
 > Note: On Laravel 5.4 the web middleware group has an entry for `\Illuminate\Session\Middleware\AuthenticateSession` (which is disabled by default). Activating this middleware will cause the "remember me" feature to fail.
 
-Make sure your User class extends `Parziphal\Parse\UserModel`. You could extend instead from `Parziphal\Parse\Auth\UserModel`, which is a authentication-ready User class:
+Make sure your User class extends `Parse\Eloquent\UserModel`. You could extend instead from `Parse\Eloquent\Auth\UserModel`, which is a authentication-ready User class:
 
 ```php
 namespace App;
 
-use Parziphal\Parse\Auth\UserModel;
+use Parse\Eloquent\Auth\UserModel;
 
 class User extends UserModel
 {
@@ -249,7 +249,7 @@ There are 3 provider drivers available:
 
 ### Log in with Facebook
 
-You can use the `Parziphal\Parse\Auth\AuthenticatesWithFacebook` trait in your auth controller along with (not instead of) Laravel's `Illuminate\Foundation\Auth\AuthenticatesUsers` trait. The `AuthenticatesWithFacebook` trait has methods to handle Facebook authentication/registration. Just bind the method (or methods) you need to a route and you're ready to go.
+You can use the `Parse\Eloquent\Auth\AuthenticatesWithFacebook` trait in your auth controller along with (not instead of) Laravel's `Illuminate\Foundation\Auth\AuthenticatesUsers` trait. The `AuthenticatesWithFacebook` trait has methods to handle Facebook authentication/registration. Just bind the method (or methods) you need to a route and you're ready to go.
 
 Below is the interface of the authentication/registration trait. Note that it can respond in two ways: with a redirection (the \*Redirect methods), or with JSON (the \*Api methods), which will respond with the `$apiResponse` array, which is there so you can customize it.
 
@@ -298,11 +298,6 @@ protected function create(array $data)
 ```
 
 Notice that the email is stored as the username, this is because on Parse, the `username` field is the login name of the user, so if you require users to login using their email, you'll have to store their email under the `username` key.
-
-## Inspiration from
-
-* GrahamCampbell's [Laravel-Parse](https://github.com/GrahamCampbell/Laravel-Parse/)
-* HipsterJazzbo's [LaraParse](https://github.com/HipsterJazzbo/LaraParse)
 
 ## License
 

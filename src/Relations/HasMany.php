@@ -1,11 +1,9 @@
-<?php
-
-namespace Parziphal\Parse\Relations;
+<?php namespace Parse\Eloquent\Relations;
 
 class HasMany extends HasOneOrMany
 {
-    public function getResults()
-    {
-        return $this->query->get();
-    }
+	public function getResults()
+	{
+		return $this->query->get();
+	}
 }

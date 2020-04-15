@@ -1,37 +1,35 @@
-<?php
+<?php namespace Parse\Eloquent\Relations;
 
-namespace Parziphal\Parse\Relations;
-
-use Parziphal\Parse\Query;
-use Parziphal\Parse\ObjectModel;
+use Parse\Eloquent\Query;
+use Parse\Eloquent\Model;
 
 abstract class RelationWithQuery extends Relation
 {
-    protected $query;
+	protected $query;
 
-    /**
-     * @param ObjectModel
-     */
-    protected $parentObject;
+	/**
+	 * @param Model
+	 */
+	protected $parentObject;
 
-    abstract protected function addConstraints();
+	abstract protected function addConstraints();
 
-    public function __construct(Query $query, ObjectModel $parentObject)
-    {
-        $this->query = $query;
-        $this->parentObject = $parentObject;
+	public function __construct(Query $query, Model $parentObject)
+	{
+		$this->query = $query;
+		$this->parentObject = $parentObject;
 
-        $this->addConstraints();
-    }
+		$this->addConstraints();
+	}
 
-    public function __call($method, $parameters)
-    {
-        $result = call_user_func_array([$this->query, $method], $parameters);
+	public function __call($method, $parameters)
+	{
+		$result = call_user_func_array([$this->query, $method], $parameters);
 
-        if ($result === $this->query) {
-            return $this;
-        }
+		if ($result === $this->query) {
+			return $this;
+		}
 
-        return $result;
-    }
+		return $result;
+	}
 }
