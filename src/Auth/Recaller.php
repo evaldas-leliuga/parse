@@ -1,4 +1,4 @@
-<?php namespace Parse\Eloquent\Auth;
+<?php namespace Parse\Auth;
 
 /**
  * This recaller will include the Parse Session Id in the cookie.

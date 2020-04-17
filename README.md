@@ -10,35 +10,88 @@ This library pretends to make Parse usable in a Eloquent-like manner. For Larave
 * User authentication with username/password combinations and/or with Facebook.
 * Command to create Models (`artisan parse:model SomeModel`).
 
-## Setup
+# Installation
 
-Install the library with Composer:
+### 1 - Dependency
 
+The first step is using composer to install the package and automatically update your `composer.json` file, you can do this by running:
+
+
+```shell
     composer require evaldas-leliuga/parse
-
-Add the service provider in your `config/app.php` file:
-
-```php
-'providers' => [
-    // etc...
-    Parse\Eloquent\ParseServiceProvider::class,
-],
 ```
 
-Publish the configuration file by running:
+### 2 - Provider
 
-    php artisan vendor:publish --tag=parse
+You need to update your application configuration in order to register the package so it can be loaded by Laravel, just update your `config/app.php` file adding the following code at the end of your `'providers'` section:
+
+> `config/app.php`
+
+```php
+<?php
+
+return [
+    // ...
+    'providers' => [
+        Parse\Providers\ParseServiceProvider::class,
+        // ...
+    ],
+    // ...
+];
+```
+
+#### Lumen
+
+Go to `/bootstrap/app.php` file and add this line:
+
+```php
+<?php
+// ...
+
+$app = new Laravel\Lumen\Application(
+    dirname(__DIR__)
+);
+
+// ...
+
+$app->register(Parse\Providers\ParseServiceProvider::class);
+
+// ...
+
+return $app;
+```
+
+### 3 - Configuration
+
+#### Publish config
+
+In your terminal type
+
+```shell
+php artisan vendor:publish --tag=parse
+```
+
+or
+
+```shell
+php artisan vendor:publish --provider="Parse\Providers\ParseServiceProvider"
+```
+
+> Lumen does not support this command, for it you should copy the file `src/config/parse.php` to `config/parse.php` of your project
+
+In `parse.php` configuration file you can determine the properties of the default values and some behaviors.
 
 The command creates a file at `config/parse.php`, where you can set your Parse server configuration, but instead of editing that file, you can set your configuration in your `.env` file by setting the following variables:
 
     PARSE_APP_ID=Your_App_ID
-    PARSE_REST_KEY=REST_API_key
     PARSE_MASTER_KEY=Master_key
+    PARSE_REST_KEY=REST_API_key
     PARSE_SERVER_URL=http://127.0.0.1:1337
     PARSE_MOUNT_PATH=/parse
 
 The `REST_API_key` variable is optional as Parse doesn't require that key anymore.
 
+# Usage
 ## Models
 
 Create models extending the `Parse\Eloquent\Model` class:
@@ -174,7 +227,7 @@ Objects and queries can be configured to use Master Key with the `$useMasterKey`
 
 ```php
 // In objects, pass a second parameter when instantiating:
-$post = new Post($data, true);
+$post = new Post($data);
 // or use the setter method:
 $post->useMasterKey(true);
 
@@ -185,35 +238,33 @@ $post->useMasterKey(function($post) {
 });
 
 // When creating queries, pass as parameter:
-$query = Post::query(true);
+$query = Post::query();
 // or use the setter method:
 $query->useMasterKey(true);
 
 // Other object methods that accept a $useMasterKey value are:
-$post  = Post::create($data, true);
+$post  = Post::create($data);
+$query->useMasterKey(true);
 $posts = Post::all(true);
 
 // To configure a single model to _always_ use master key, define
-// a protected static property `$defaultUseMasterKey`:
+// a protected static property `$useMasterKey`:
 class Post extends Model
 {
-    protected static $defaultUseMasterKey = true;
+    protected static $useMasterKey = true;
 }
-
-// Finally, you can make all models use master key with this:
-Parse\Eloquent\Model::setDefaultUseMasterKey(true);
 ```
 
 ## Log in with Parse
 
 > Note: On Laravel 5.4 the web middleware group has an entry for `\Illuminate\Session\Middleware\AuthenticateSession` (which is disabled by default). Activating this middleware will cause the "remember me" feature to fail.
 
-Make sure your User class extends `Parse\Eloquent\UserModel`. You could extend instead from `Parse\Eloquent\Auth\UserModel`, which is a authentication-ready User class:
+Make sure your User class extends `Parse\Eloquent\UserModel`. You could extend instead from `Parse\Auth\UserModel`, which is a authentication-ready User class:
 
 ```php
 namespace App;
 
-use Parse\Eloquent\Auth\UserModel;
+use Parse\Auth\UserModel;
 
 class User extends UserModel
 {
@@ -249,7 +300,7 @@ There are 3 provider drivers available:
 
 ### Log in with Facebook
 
-You can use the `Parse\Eloquent\Auth\AuthenticatesWithFacebook` trait in your auth controller along with (not instead of) Laravel's `Illuminate\Foundation\Auth\AuthenticatesUsers` trait. The `AuthenticatesWithFacebook` trait has methods to handle Facebook authentication/registration. Just bind the method (or methods) you need to a route and you're ready to go.
+You can use the `Parse\Auth\AuthenticatesWithFacebook` trait in your auth controller along with (not instead of) Laravel's `Illuminate\Foundation\Auth\AuthenticatesUsers` trait. The `AuthenticatesWithFacebook` trait has methods to handle Facebook authentication/registration. Just bind the method (or methods) you need to a route and you're ready to go.
 
 Below is the interface of the authentication/registration trait. Note that it can respond in two ways: with a redirection (the \*Redirect methods), or with JSON (the \*Api methods), which will respond with the `$apiResponse` array, which is there so you can customize it.
 

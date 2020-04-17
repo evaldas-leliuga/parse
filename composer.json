@@ -17,13 +17,13 @@
     },
     "autoload": {
         "psr-4": {
-            "Parse\\Eloquent\\": "src/"
+            "Parse\\": "src/"
         }
     },
     "extra": {
         "laravel": {
             "providers": [
-                "Parse\\Eloquent\\ParseServiceProvider"
+                "Parse\\Providers\\ParseServiceProvider"
             ]
         }
     }

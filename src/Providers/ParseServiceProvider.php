@@ -1,14 +1,15 @@
-<?php namespace Parse;
+<?php namespace Parse\Providers;
 
-use Parse\Console\ModelMakeCommand;
+use Illuminate\Support\Str;
+use Parse\ParseClient;
 use Parse\Auth\Providers\UserProvider;
 use Parse\Auth\SessionGuard;
 use Parse\Auth\Providers\AnyUserProvider;
 use Parse\Auth\Providers\FacebookUserProvider;
+use Parse\Console\ModelMakeCommand;
+use Parse\SessionStorage;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\ServiceProvider;
-use Laravel\Lumen\Application as LumenApplication;
-use Illuminate\Foundation\Application as LaravelApplication;
 
 class ParseServiceProvider extends ServiceProvider
 {
@@ -33,15 +34,15 @@ class ParseServiceProvider extends ServiceProvider
 	 */
 	protected function setupConfig()
 	{
-		$source = realpath(__DIR__ . '/../config/parse.php');
+        $configFile = realpath(__DIR__ . '/../config/parse.php');
 
-		if ($this->app instanceof LaravelApplication && $this->app->runningInConsole()) {
-			$this->publishes([$source => config_path('parse.php')], 'parse');
-		} else if ($this->app instanceof LumenApplication) {
-			$this->app->configure('parse');
-		}
+        if ($this->isLumen()) {
+            $this->app->configure('parse');
+        } else {
+            $this->publishes([$configFile => config_path('parse.php')], 'parse');
+        }
 
-		$this->mergeConfigFrom($source, 'parse');
+		$this->mergeConfigFrom($configFile, 'parse');
 	}
 
 	protected function registerCommands()
@@ -96,25 +97,11 @@ class ParseServiceProvider extends ServiceProvider
 		});
 	}
 
-	/**
-	 * Register the service provider.
-	 *
-	 * @return void
-	 */
-	public function register()
-	{
-		//
-	}
-
-	/**
-	 * Get the services provided by the provider.
-	 *
-	 * @return string[]
-	 */
-	public function provides()
-	{
-		return [
-			//
-		];
-	}
+    /**
+     * @return bool
+     */
+    private function isLumen(): bool
+    {
+        return Str::contains($this->app->version(), 'Lumen');
+    }
 }

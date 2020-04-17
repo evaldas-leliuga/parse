@@ -1,14 +1,14 @@
 <?php namespace Parse\Auth;
 
 use Illuminate\Auth\Authenticatable;
-use Parse\Eloquent\UserModel as BaseUserModel;
+use Parse\Eloquent\User as BaseUserModel;
 use Illuminate\Auth\Passwords\CanResetPassword;
 use Illuminate\Contracts\Auth\Access\Gate as GateContract;
 use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
 use Illuminate\Contracts\Auth\Access\Authorizable as AuthorizableContract;
 use Illuminate\Contracts\Auth\CanResetPassword as CanResetPasswordContract;
 
-class UserModel extends BaseUserModel implements AuthenticatableContract, AuthorizableContract, CanResetPasswordContract
+class User extends BaseUserModel implements AuthenticatableContract, AuthorizableContract, CanResetPasswordContract
 {
 	use Authenticatable, CanResetPassword;
 

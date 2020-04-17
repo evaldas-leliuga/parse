@@ -1,4 +1,4 @@
-<?php namespace Parse\Eloquent\Console;
+<?php namespace Parse\Console;
 
 use Illuminate\Console\GeneratorCommand;
 

@@ -1,4 +1,4 @@
-<?php namespace Parse\Eloquent\Auth\Providers;
+<?php namespace Parse\Auth\Providers;
 
 use Illuminate\Contracts\Auth\Authenticatable;
 

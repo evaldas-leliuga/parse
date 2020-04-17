@@ -1,4 +1,4 @@
-<?php namespace Parse\Eloquent;
+<?php namespace Parse;
 
 use Illuminate\Support\Facades\Session;
 use Parse\ParseStorageInterface;

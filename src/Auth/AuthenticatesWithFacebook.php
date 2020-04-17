@@ -1,4 +1,4 @@
-<?php namespace Parse\Eloquent\Auth;
+<?php namespace Parse\Auth;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;

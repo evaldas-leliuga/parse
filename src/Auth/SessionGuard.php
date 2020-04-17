@@ -1,4 +1,4 @@
-<?php namespace Parse\Eloquent\Auth;
+<?php namespace Parse\Auth;
 
 use Parse\ParseUser;
 use Parse\ParseClient;
